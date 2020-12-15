@@ -33,8 +33,19 @@ html, body {
 }
 
 #board .region .tile {
+    display: flex;
     border: 1px solid #000;
+    align-items: center;
+    padding-left: 50%;
 }
+
+#board .region .tile:hover {
+    background-color: #C9C0BA;
+}
+
+/*#board .region .tile:focus {*/
+    /*background-color: red;*/
+/*}*/
 
 #menu {
     grid-area: menu;
