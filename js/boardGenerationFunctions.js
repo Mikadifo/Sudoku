@@ -1,4 +1,4 @@
-export const createTiles = (tiles, region) => {
+const createTiles = (tiles, region) => {
     if (tiles < 1) return
 
     let tile = document.createElement('div')
