@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background-color: #CCB7AE;
+}
+
+#head {
+    grid-area: head;
+    text-align: center;
+    line-height: 5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#board {
+    grid-area: board;
+    background-color: #D6CFCB;
+    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#board .region {
+    border: 1px solid #000;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#board .region .tile {
+    display: flex;
+    border: 1px solid #000;
+    align-items: center;
+    padding-left: 50%;
+}
+
+#board .region .tile:hover {
+    background-color: #C9C0BA;
+}
+
+/*#board .region .tile:focus {*/
+    /*background-color: red;*/
+/*}*/
+
+#menu {
+    grid-area: menu;
+    text-align: center;
+}
+
+#menu li {
+    list-style: none;
+    display: inline-block;
+    padding: 0 3rem;
+}
+
+#menu li a {
+    text-decoration: none;
+    color: #000;
+    font-size: 1.5rem;
+}
+
+#menu li a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    display: grid;
+    gap: 20px;
+    grid-template: ".    head  .    " 4rem
+		   ".    board .    " auto
+		   ".    menu  .    " 4rem /
+		    auto 50%   auto;
+}
+
+
