@@ -25,13 +25,18 @@ export const addRegionIds = (keyword, initial) => {
     regions.forEach($region => $region.id = `${keyword} ${initial ++}`)
 }
 
-const addTextToTiles = ($tile) => {
-    const $tileText = document.createTextNode('0')
+export const fillBoardTiles = (tilesValues) => {
+    tilesValues.forEach((v, k) => {
+	const $tileText = document.createTextNode(v)
+	const $tile = document.getElementById(k)
 
-    $tile.appendChild($tileText)
+	$tile.appendChild($tileText)
+    })
 }
 
-const addIdsToTiles = ($tile, indexTile, indexRegion) => {
+const addIdsToTiles = ($regionTiles, indexTile, indexRegion) => {
+    const $tile = $regionTiles[indexTile]
+
     $tile.id = `tile ${indexRegion} ${indexTile}`
 }
 
@@ -41,12 +46,9 @@ const addTilesToRegion = (boardTiles, region, indexRegion) => {
     const $region = document.getElementById(`region ${indexRegion}`)
     const $regionTiles = $region.getElementsByClassName('tile')
 
-    region.forEach((tile, index) => {
-	const $tile = $regionTiles[index]
-
-	addIdsToTiles($tile, index, indexRegion)
-	addTextToTiles($tile)
-    })
+    region.forEach((tile, index) =>
+	addIdsToTiles($regionTiles, index, indexRegion)
+    )
 
     boardTiles[indexRegion] = region
 }
@@ -58,7 +60,7 @@ const arrayFromTo = (from, to, array) => {
     return arrayFromTo(from + 1, to, array)
 }
 
-export const fillBoard = (regions) => {
+export const fillBoardRegions = regions => {
     const boardTiles = new Array(regions)
     boardTiles.fill()
 
