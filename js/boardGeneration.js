@@ -20,16 +20,16 @@ export const createBoard = (regions, tilesPerRegion, $board) => {
 }
 
 export const addRegionIds = (keyword, initial) => {
-    const $regions = Array.from(document.getElementsByClassName('region'))
+    const regions = Array.from(document.getElementsByClassName('region'))
 
-    $regions.forEach($region => $region.id = `${keyword} ${initial ++}`)
+    regions.forEach($region => $region.id = `${keyword} ${initial ++}`)
 }
 
 const addTextToTiles = ($regionTiles, tile, indexTile, indexRegion) => {
     const $tile = $regionTiles[indexTile]
-    const $txt = document.createTextNode(tile)
+    const $tileText = document.createTextNode(tile)
 
-    $tile.appendChild($txt)
+    $tile.appendChild($tileText)
     $tile.id = `tile ${indexRegion} ${indexTile}`
 }
 
