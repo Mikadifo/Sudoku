@@ -1,4 +1,4 @@
-import { createBoard, addRegionIds, fillBoardRegions, fillBoardTiles } from './boardGeneration.js'
+import { createBoard, addRegionIds, fillBoardRegions, fillBoardTiles, fillBoardRandomTiles } from './boardGeneration.js'
 import { onClickTileConsumer } from './eventConsumers.js'
 
 export class SudokuBoard {
@@ -13,14 +13,13 @@ export class SudokuBoard {
 	addRegionIds('region', 0)
     }
 
-    fill(mode, regions) {
+    fill(tilesValues, regions) {
 	fillBoardRegions(regions)
-	const map = new Map()
-	
-	map.set('tile 0 1', 1)
-	map.set('tile 0 2', 1)
 
-	fillBoardTiles(map)
+	if (!tilesValues)
+	    fillBoardRandomTiles()
+	else
+	    fillBoardTiles(tilesValues)
     }
 
     addTilesListeners() {

@@ -8,7 +8,7 @@ export const onLoadWindowConsumer = () => {
     const board = new SudokuBoard('board')
 
     board.generate(9, 9)
-    board.fill('random', 9)
+    board.fill(null, 9)
     board.addTilesListeners()
 }
 

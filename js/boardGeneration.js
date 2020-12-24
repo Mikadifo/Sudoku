@@ -69,3 +69,55 @@ export const fillBoardRegions = regions => {
     )
 }
 
+const isTileInRegion = (tileValue, tileRegion, $tiles) =>
+    Array
+	.from($tiles)
+	.filter($tile =>
+	    $tile.id.split(' ')[1] === tileRegion
+	)
+	.map($tile => $tile.innerHTML)
+	.includes(tileValue)
+
+const isTileInRow = (tileValue, regionTiles, rowTiles, $tiles) =>
+    regionTiles >= rowTiles.length
+	? false
+	: rowTiles.filter(i =>
+	    Array
+		.from($tiles)
+		.filter($tile => $tile.id === `tile ${regionTiles} ${i}`)
+		.map($tile => $tile.innerHTML)
+		.includes(tileValue)
+	).length > 0
+	    ? true
+	    : isTileInRow(tileValue, ++ regionTiles, rowTiles, $tiles)
+
+const isTileInColumn = (tileValue, regionTiles, columnTiles, $tiles) =>
+    regionTiles >= columnTiles.length * 3
+	? false
+	: columnTiles.filter(i =>
+	    Array
+		.from($tiles)
+		.filter($tile => $tile.id === `tile ${regionTiles} ${i}`)
+		.map($tile => $tile.innerHTML)
+		.includes(tileValue)
+	).length > 0
+	    ? true
+	    : isTileInColumn(tileValue, regionTiles + 3, columnTiles, $tiles)
+
+const setTileInBoard = $tile => {
+    const random = Math.floor(Math.random() * 9) + 1
+    $tile.appendChild(document.createTextNode(random))
+
+    //console.log(isTileInRegion('1', '0', $tiles))
+    //console.log(isTileInRow('1', 0, [0, 1, 2], $tiles))
+    //console.log(isTileInColumn('1', 0, [0, 3, 6], $tiles))
+}
+
+export const fillBoardRandomTiles = () => {
+    const $tiles = document.getElementsByClassName('tile')
+ 
+    Array
+	.from($tiles)
+	.forEach(setTileInBoard)
+}
+
