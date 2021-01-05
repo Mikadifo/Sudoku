@@ -1,123 +1,142 @@
-const createTiles = (tiles, $region) => {
-    if (tiles < 1) return
+import { fillArrayWhitIndexValues } from './utils/fill_arrays.js'
+import { shuffleArray } from './utils/sort_arrays.js'
 
-    const $tile = document.createElement('div')
-    $tile.className = 'tile'
-    $region.appendChild($tile)
-
-    createTiles(tiles - 1, $region)
-}
-
-export const createBoard = (regions, tilesPerRegion, $board) => {
-    if (regions < 1) return
-
-    const $region = document.createElement('div')
-    $region.className = 'region'
-    $board.appendChild($region)
-
-    createTiles(tilesPerRegion, $region)
-    createBoard(regions - 1, tilesPerRegion, $board)
-}
-
-export const addRegionIds = (keyword, initial) => {
-    const regions = Array.from(document.getElementsByClassName('region'))
-
-    regions.forEach($region => $region.id = `${keyword} ${initial ++}`)
-}
-
-export const fillBoardTiles = (tilesValues) => {
-    tilesValues.forEach((v, k) => {
-	const $tileText = document.createTextNode(v)
-	const $tile = document.getElementById(k)
-
-	$tile.appendChild($tileText)
-    })
-}
-
-const addIdsToTiles = ($regionTiles, indexTile, indexRegion) => {
-    const $tile = $regionTiles[indexTile]
-
-    $tile.id = `tile ${indexRegion} ${indexTile}`
-}
-
-const addTilesToRegion = (boardTiles, region, indexRegion) => {
-    region = arrayFromTo(1, 9, [])
-
-    const $region = document.getElementById(`region ${indexRegion}`)
-    const $regionTiles = $region.getElementsByClassName('tile')
-
-    region.forEach((tile, index) =>
-	addIdsToTiles($regionTiles, index, indexRegion)
-    )
-
-    boardTiles[indexRegion] = region
-}
-
-const arrayFromTo = (from, to, array) => {
-    if (from > to) return array
-    array.push(from)
-
-    return arrayFromTo(from + 1, to, array)
-}
-
-export const fillBoardRegions = regions => {
-    const boardTiles = new Array(regions)
-    boardTiles.fill()
-
-    boardTiles.forEach((region, index) => 
-	addTilesToRegion(boardTiles, region, index)
-    )
-}
-
-const isTileInRegion = (tileValue, tileRegion, $tiles) =>
+const createTiles = $region =>
     Array
-	.from($tiles)
-	.filter($tile =>
-	    $tile.id.split(' ')[1] === tileRegion
+	.from({ length: 9 }, fillArrayWhitIndexValues)
+	.forEach(number => {
+	    const $tile = document.createElement('div')
+	    $tile.className = 'tile'
+	    $region.appendChild($tile)
+	    $tile.id = `tile ${$region.id.split(' ')[1]} ${number}`
+	})
+
+export const createBoard = $board =>
+    Array
+	.from({ length: 9 }, fillArrayWhitIndexValues)
+	.forEach(number => {
+	    const $region = document.createElement('div')
+
+	    $region.className = 'region'
+	    $board.appendChild($region)
+	    $region.id = `region ${number}`
+
+	    createTiles($region)
+	})
+
+export const fillTileWhitNextNumber = (region, tile, number, map) => {
+    const tileId = `tile ${region} ${tile}`
+
+    map.set(tileId, number.toString())
+}
+
+const fillUpTiles = (upTiles, upRegion, numbers, map) =>
+    upTiles
+	.forEach(upTile => 
+	    fillTileWhitNextNumber(upRegion, upTile, numbers.pop() + 1, map)
 	)
-	.map($tile => $tile.innerHTML)
-	.includes(tileValue)
 
-const isTileInRow = (tileValue, regionTiles, rowTiles, $tiles) =>
-    regionTiles >= rowTiles.length
-	? false
-	: rowTiles.filter(i =>
-	    Array
-		.from($tiles)
-		.filter($tile => $tile.id === `tile ${regionTiles} ${i}`)
-		.map($tile => $tile.innerHTML)
-		.includes(tileValue)
-	).length > 0
-	    ? true
-	    : isTileInRow(tileValue, ++ regionTiles, rowTiles, $tiles)
+export const fillFirstRow = () => {
+    const UP_ROW_REGION = [0, 1, 2]
+    const TO_FILL_NUMBERS = shuffleArray(Array.from({ length: 9 }, fillArrayWhitIndexValues))
+    const map = new Map()
 
-const isTileInColumn = (tileValue, regionTiles, columnTiles, $tiles) =>
-    regionTiles >= columnTiles.length * 3
-	? false
-	: columnTiles.filter(i =>
-	    Array
-		.from($tiles)
-		.filter($tile => $tile.id === `tile ${regionTiles} ${i}`)
-		.map($tile => $tile.innerHTML)
-		.includes(tileValue)
-	).length > 0
-	    ? true
-	    : isTileInColumn(tileValue, regionTiles + 3, columnTiles, $tiles)
+    UP_ROW_REGION
+	.forEach(upRegion =>
+	    fillUpTiles(UP_ROW_REGION, upRegion, TO_FILL_NUMBERS, map)
+	)
 
-const setTileInBoard = $tile => {
-    const random = Math.floor(Math.random() * 9) + 1
-    $tile.appendChild(document.createTextNode(random))
-
-    //console.log(isTileInRegion('1', '0', $tiles))
-    //console.log(isTileInRow('1', 0, [0, 1, 2], $tiles))
-    //console.log(isTileInColumn('1', 0, [0, 3, 6], $tiles))
+    return map
 }
 
-export const fillBoardRandomTiles = () => {
-    const $tiles = document.getElementsByClassName('tile')
- 
-    Array
-	.from($tiles)
-	.forEach(setTileInBoard)
+export const fillBoardWithValues = values => {
+    values.forEach((value, tileId) =>
+	document
+	    .getElementById(tileId)
+	    .innerHTML = value
+    )
+}
+
+export const shuffleRowsAndColumns = map => {
+    const vals = [...map.values()]
+
+    let row = []
+    let range = 8
+
+    const rows = vals.reduce((acc, curr, currI) => {
+	row.push(curr)
+
+	if (currI === range) {
+	    range += 9
+	    acc.push(row)
+	    row = []
+	}
+
+	return acc
+    }, [])
+
+    const regionCols = []
+    let cols = []
+    let range2 = 2
+
+    rows.forEach((n, i) => {
+	let col = []
+	cols.push(col)
+
+	if (i === range2) {
+	    range2 += 3
+	    regionCols.push(cols)
+	    cols = []
+	}
+
+	rows.forEach(n2 => {
+	    col.push(n2[i])
+	})
+    })
+
+    regionCols.forEach(shuffleArray)
+
+    const onprev = regionCols.reduce((acc, curr) => acc.concat(curr), [])
+
+    let colrows = []
+
+    onprev.forEach((n, i) => {
+	let colrow = []
+	colrows.push(colrow)
+
+	onprev.forEach(n2 => colrow.push(n2[i]))
+    })
+
+    let rowR = []
+    let rangeR = 2
+
+    const rowsRegion = colrows.reduce((acc, curr, currI) => {
+	rowR.push(curr)
+
+	if (currI === rangeR) {
+	    rangeR += 3
+	    acc.push(rowR)
+	    rowR = []
+	}
+
+	return acc
+    }, [])
+
+    rowsRegion.forEach(shuffleArray)
+    let newValues = rowsRegion
+			.reduce((acc, curr) => 
+			    acc.concat(curr.reduce((ac, cu) =>
+				ac.concat(cu), [])
+			    ), []
+			)
+
+	let  i = 0
+    map.forEach((val, key, mma) => mma.set(key, newValues[i ++]))
+}
+
+export const finishGame = () => {
+    alert('Sudoku Completed')
+    document.getElementById('hint_button').setAttribute('hidden', true)
+    document.getElementById('solve_button').setAttribute('hidden', true)
 }
 

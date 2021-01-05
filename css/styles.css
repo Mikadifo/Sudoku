@@ -43,9 +43,9 @@ html, body {
     background-color: #C9C0BA;
 }
 
-/*#board .region .tile:focus {*/
-    /*background-color: red;*/
-/*}*/
+#board .region .tile:focus {
+    background-color: #cfcfcf;
+}
 
 #menu {
     grid-area: menu;
@@ -55,17 +55,17 @@ html, body {
 #menu li {
     list-style: none;
     display: inline-block;
-    padding: 0 3rem;
+    margin: 0 3rem;
 }
 
-#menu li a {
-    text-decoration: none;
+#menu li button {
     color: #000;
+    width: 6rem;
     font-size: 1.5rem;
 }
 
-#menu li a:hover {
-    text-decoration: underline;
+#menu li button:hover {
+    width: 7rem;
 }
 
 .container {
